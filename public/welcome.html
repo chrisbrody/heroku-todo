@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tasks</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+  <style>
+    nav {
+      margin-bottom: 50px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-light bg-faded">
+    <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2">
+      &#9776;
+    </button>
+    <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
+      <a class="navbar-brand" href="#"></a>
+      
+    </div>
+    <button class="btn btn-secondary-outline pull-right" id="logout-btn" onclick="logout()">Logout</button>
+  </nav>
+  <!-- Tasks -->
+  <div class="container-fluid">
+
+    <div id="usersTasks" class="col-sm-12">
+      
+    </div>
+
+    <div class="col-sm-4 col-sm-offset-4">
+      <form class="form-inline" id="newTaskForm">
+        <div class="form-group">
+          <label class="sr-only" for="currentTask">Add a new task</label>
+          <input type="text" class="form-control" id="currentTask" placeholder="Add a new task" autofocus>
+        </div>
+        <button type="button" class="btn btn-secondary-outline" id="addNewTask" onclick="addTask()">Add</button>
+      </form>
+    </div>
+    
+   <!--  <div class="form-group row">
+      <div class="col-sm-4 col-sm-offset-4">
+        <div class="card">
+          <label>
+            <p contenteditable="false">Check me out</p>
+          </label>
+          <button class="btn btn-secondary pull-right">
+            <i class="fa fa-pencil"></i>
+          </button>
+          <button class="btn btn-secondary pull-right">
+            <i class="fa fa-trash"></i>
+          </button>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div> -->
+  
+
+  </div>
+
+  <script src="/js/lib/jquery.js"></script>
+  <script src="/js/lib/bootstrap.min.js"></script>
+  <script src="/dpd.js"></script>
+  <script type="text/javascript">
+    // store User ID
+    var UID
+    // query database for tasks that match current UID
+    var query = {UID: UID}
+
+    // find user data on page load
+    dpd.users.me(function(user) {
+      // run find user function - passing along the current user
+      findUserData(user)
+    })
+
+    // delete a task
+    $(document).on('click', 'i', function() {
+      var id = this.id
+      // remove task from deployedd
+      dpd.tasks.del(id, function (err) {
+        if(err) console.log('This is happening: ' + err);        
+      })
+      // remove task from view
+      $(this).parent().remove()     
+    })
+
+    // stop default refresh on form submit - instead run addTask function
+    $('#newTaskForm').submit(function(e){
+      e.preventDefault();
+      addTask()
+    })
+    //
+    function addTask() {
+      var user = UID
+      var task = $('#currentTask').val()
+      if(!$('#currentTask').val() == '') {
+        // post data to deploed
+        dpd.tasks.post({ "UID": UID, "task": task, "completed": false }, function(result, err){
+          if(err) { return (console.log(err)) }
+          // store data for the view
+          var taskDelete = '<div class="row"><i class="fa fa-trash remove" id="'+ result.id +'"></i>'
+          var task = '<span> ----- Task at hand:  ' + result.task + '</span>'
+          // update browser view
+          $('#usersTasks').append(taskDelete + task)
+        }) 
+      } else alert('add something')
+      // clear task input and focus on it again
+      $('#currentTask').val('')
+      $('#currentTask').focus()
+    }
+    // Log a user out    
+    function logout() {
+      dpd.users.logout(function(res, err) {
+        location.href = "/"
+      })
+    }
+
+    // Find user data if there is a user logged in
+    function findUserData(user) {
+      if (user) {
+        UID = user.id
+        // add user data to nav bar
+        $('.navbar-brand').text("Task list of: " + user.username + "!" + ' user id: ' + UID)   
+
+        // get all tasks that match the User ID 
+        dpd.tasks.get(query, function (result) {
+          for(i = 0; i < result.length; i++) {
+            // if user id matches a queryed UID 
+            if(UID == result[i].UID) {
+              // store data for the view
+              var taskDelete = '<div class="row"><i class="fa fa-trash remove" id="'+ result[i].id +'"></i>'
+              var task = '<span> ----- Task at hand: ' + result[i].task + '</span>'
+              // add data to div#userTask tag
+              $('#usersTasks').append(taskDelete + ' ' + task  + '</div>')
+            }
+          }
+        })  
+      } else {
+        // if not logged in - redirect to home
+        location.href = "/"
+      }
+    }
+  </script>
+</body>
+</html>

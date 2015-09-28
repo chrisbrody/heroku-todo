@@ -1,0 +1,29 @@
+{
+	"type": "Collection",
+	"properties": {
+		"UID": {
+			"name": "UID",
+			"type": "string",
+			"typeLabel": "string",
+			"required": false,
+			"id": "UID",
+			"order": 0
+		},
+		"task": {
+			"name": "task",
+			"type": "string",
+			"typeLabel": "string",
+			"required": true,
+			"id": "task",
+			"order": 1
+		},
+		"completed": {
+			"name": "completed",
+			"type": "boolean",
+			"typeLabel": "boolean",
+			"required": false,
+			"id": "completed",
+			"order": 2
+		}
+	}
+}
