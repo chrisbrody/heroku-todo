@@ -1,0 +1,22 @@
+{
+  "name": "dpdtodo",
+  "version": "1.0.0",
+  "description": "simple heroku todo application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "deployd": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrisbrody/heroku-todo.git"
+  },
+  "author": "chrisbrody",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chrisbrody/heroku-todo/issues"
+  },
+  "homepage": "https://github.com/chrisbrody/heroku-todo#readme"
+}
